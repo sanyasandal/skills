@@ -165,14 +165,14 @@ environment only. Recipe:
    (ranked sources for the 13 probe paths and the 7 recommended ones), `module-candidates.json`
    (frames with their page, sections by y, component sets, remote
    components), `spec-tables.json`, frame screenshots and
-   `_crawl-log.json`. What to capture depends on the file's shape. A
-   file of **page designs**: the URL of the page or frame. A
-   **component kit** (one module per page, tokens on documentation
-   frames): `capture <figma-url> --list` prints every page's top-level
-   nodes; pass the foundation frames (colour, type, spacing, the button
-   set) and one representative frame per module page with
-   `--frames <id,…>`, raising `--max-frames` to fit. Without either,
-   a file larger than `--max-frames` stops and asks for this.
+   `_crawl-log.json`. It takes the whole file: every visible top-level
+   frame, section, component and component set of every page, in
+   document order, page designs and component kits alike. The URL's
+   node-id is the page the designer had open; it is recorded as
+   `linked`, never used to drop frames. Large files warn on stderr and
+   never stop; a frame Figma cannot render is recorded as not
+   renderable. `--list` prints every page's top-level nodes;
+   `--frames <id,…>` narrows; `--max-frames <n>` caps and lists the cut.
 3. Author `reskin/curation-rules.json`, the only non-mechanical
    input: reference pins (one frame, variable mode and breakpoint per
    module family; § Pin one reference page), roles, normalizations,
@@ -204,7 +204,8 @@ for each one neither mapped nor marked absent and lists them in
 
 Provenance class: **`figma-rest`** — `_crawl-log.json#discovery`
 records `fetchTechnique: "figma-rest"` in place of a crawl, with the
-file version and the frames selected and cut; `notBrowserRendered`
+file version, the linked node, the frames selected and cut and any
+render errors; `notBrowserRendered`
 says per artifact that it was authored from REST node data. Every token
 cites its node in `donor-tokens.json#nodeRefs` (`via: "rest"`). Figma has
 no computed styles, so `donor-tokens.json` values are authored from node
